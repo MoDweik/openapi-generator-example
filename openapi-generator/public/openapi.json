@@ -1,0 +1,648 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "contact" : {
+      "email" : "services.enterpriseintegration@hmrc.gov.uk",
+      "name" : "Enterprise Integration Services"
+    },
+    "description" : "A synchronous API that allows MDTP / BTA to post requests to ETMP in order for subscriptions to be created for OECD Pillar 2 customers.",
+    "title" : "Create Subscription For OECD Tax Pillar 2 Service",
+    "version" : "1.1.0",
+    "x-integration-catalogue" : {
+      "reviewed-date" : "2023-08-05",
+      "platform" : "CORE_IF",
+      "publisher-reference" : "API#2142",
+      "short-description" : "A synchronous API that allows MDTP / BTA to post requests to ETMP in order for subscriptions to be created for OECD Pillar 2 customers.",
+      "status" : "LIVE",
+      "backends" : [ "ETMP" ]
+    }
+  },
+  "servers" : [ {
+    "description" : "Actual environment values can be obtained from IF platforms team for each environment",
+    "url" : "https://{hostname}:{port}"
+  } ],
+  "tags" : [ {
+    "description" : "A synchronous API that allows MDTP / BTA to post requests to ETMP in order for subscriptions to be created for OECD Pillar 2 customers..",
+    "name" : "API#2142"
+  } ],
+  "paths" : {
+    "/pillar2/subscription" : {
+      "post" : {
+        "description" : "\nExample: /pillar2/subscription\n```\nChange Log\n```\n\n  | Version | Date | Author | Description |\n  |---|-----|------|-----|\n  | 0.1.0  | 26-07-2023 | Audu Alfa  | Initial draft |\n  |---|-----|------|-----|\n  | 1.0.0  | 02-08-2023 | Audu Alfa  | Baselined Version |\n  | 1.1.0  | 05-08-2023 | Audu Alfa  | Updated the folliwing: |\n  |||| - parameters > correlationId > description |\n  |||| - Added 'GB' to the countryCode enum list |\n  |||| - Updated request example to inlcude telephone numbers as strings |\n  | 1.2.0  | 05-08-2023 | Audu Alfa  | Updated the folliwing:|\n  |||| - Removed originator id from parameters section|\n  |||| - Removed 400 http response - 'invalid or missing regime'|\n  |||| - Removed '/' at the end of url path resulting in '/pillar2/subscription' |\n  \n",
+        "operationId" : "createSubscriptionPillar2",
+        "parameters" : [ {
+          "description" : "Mandatory. The environment in use.",
+          "explode" : false,
+          "in" : "header",
+          "name" : "Environment",
+          "required" : true,
+          "schema" : {
+            "enum" : [ "ist0", "clone", "live" ],
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "Strongly recommended. A UUID format string for the transaction.",
+          "explode" : false,
+          "in" : "header",
+          "name" : "CorrelationId",
+          "required" : false,
+          "schema" : {
+            "pattern" : "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "examples" : {
+                "Example1" : {
+                  "summary" : "Full Request Payload Including Optional Fields.",
+                  "value" : {
+                    "upeDetails" : {
+                      "safeId" : "XK2292282712548",
+                      "customerIdentification1" : "SA7743248",
+                      "customerIdentification2" : "1234567890",
+                      "organisationName" : "Acme Ltd",
+                      "registrationDate" : "1994-12-05",
+                      "domesticOnly" : true,
+                      "filingMember" : false
+                    },
+                    "accountingPeriod" : {
+                      "startDate" : "2022-04-06",
+                      "endDate" : "2023-04-05"
+                    },
+                    "upeCorrespAddressDetails" : {
+                      "addressLine1" : "10 High Street",
+                      "addressLine2" : "Egham",
+                      "addressLine3" : "Surrey",
+                      "addressLine4" : "South East England",
+                      "postCode" : "SU10 6HH",
+                      "countryCode" : "GB"
+                    },
+                    "primaryContactDetails" : {
+                      "name" : "Fred Jones",
+                      "telephone" : "01159700700",
+                      "emailAddress" : "fred.jone@acme.com"
+                    },
+                    "secondaryContactDetails" : {
+                      "name" : "Jill Jones",
+                      "telephone" : "01159788799",
+                      "emailAddress" : "jill.jone@acme.com"
+                    },
+                    "filingMemberDetails" : {
+                      "safeId" : "XV5277988337712",
+                      "customerIdentification1" : "DD17743248",
+                      "customerIdentification2" : "431234567890",
+                      "organisationName" : "Acme Upe Ltd"
+                    }
+                  }
+                }
+              },
+              "schema" : {
+                "$ref" : "#/components/schemas/request"
+              }
+            }
+          },
+          "description" : "Request body",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "examples" : {
+                  "Success Response" : {
+                    "value" : {
+                      "success" : {
+                        "processingDate" : "2022-01-31T09:26:17Z",
+                        "formBundleNumber" : "119000004320",
+                        "plrReference" : "XMPLR0012345678"
+                      }
+                    }
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/successResponse"
+                }
+              }
+            },
+            "description" : "Success Response",
+            "headers" : {
+              "CorrelationId" : {
+                "$ref" : "#/components/headers/CorrelationId"
+              }
+            }
+          },
+          "400" : {
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "examples" : {
+                  "Bad request - single code sample" : {
+                    "value" : {
+                      "failures" : [ {
+                        "code" : "INVALID_PAYLOAD",
+                        "reason" : "Submission has not passed validation. Invalid Payload."
+                      } ]
+                    }
+                  },
+                  "Bad request - Multiple Error Codes" : {
+                    "value" : {
+                      "failures" : [ {
+                        "code" : "INVALID_CORRELATIONID",
+                        "reason" : "Submission has not passed validation. Invalid Header CorrelationId."
+                      }, {
+                        "code" : "INVALID_PAYLOAD",
+                        "reason" : "Submission has not passed validation. Invalid Payload."
+                      } ]
+                    }
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorResponse"
+                }
+              }
+            },
+            "description" : "Bad Request\n```\nA bad request has been made; this could be due to one or more issues with the request\n\n\"code\"                   \"reason\"\nINVALID_CORRELATIONID     Submission has not passed validation. Invalid Header CorrelationId.\nINVALID_PAYLOAD           Submission has not passed validation. Invalid Payload.",
+            "headers" : {
+              "CorrelationId" : {
+                "$ref" : "#/components/headers/CorrelationId"
+              }
+            }
+          },
+          "404" : {
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "examples" : {
+                  "Identifier not found sample" : {
+                    "summary" : "Single Error Code",
+                    "value" : {
+                      "failures" : [ {
+                        "code" : "BUSINESS_PARTNER_NOT_FOUND",
+                        "reason" : "The backend has rejected the request due to no business partner being found against the ID supplied."
+                      } ]
+                    }
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorResponse"
+                }
+              }
+            },
+            "description" : "Not found at back-end\n```\n\"code\"                     \"reason\"\nBUSINESS_PARTNER_NOT_FOUND  The backend has rejected the request due to no business partner being found against the ID supplied.\n",
+            "headers" : {
+              "CorrelationId" : {
+                "$ref" : "#/components/headers/CorrelationId"
+              }
+            }
+          },
+          "409" : {
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "examples" : {
+                  "Identifier not found sample" : {
+                    "summary" : "Single Error Code",
+                    "value" : {
+                      "failures" : [ {
+                        "code" : "DUPLICATE_ACK_REF",
+                        "reason" : "The backend has rejected the request due to a duplicate acknowledgement reference already existing."
+                      } ]
+                    }
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorResponse"
+                }
+              }
+            },
+            "description" : "Duplicate Record at back-end\n```\n\"code\"                     \"reason\"\nDUPLICATE_ACK_REF           The backend has rejected the request due to a duplicate acknowledgement reference already existing.\nSUBSCRIPTION_CONFLICT       The backend has rejected the request due to the business partner already having a SUBSCRIPTION for this regime.\n",
+            "headers" : {
+              "CorrelationId" : {
+                "$ref" : "#/components/headers/CorrelationId"
+              }
+            }
+          },
+          "422" : {
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "examples" : {
+                  "Identifier not found sample" : {
+                    "summary" : "Single Error Code",
+                    "value" : {
+                      "failures" : [ {
+                        "code" : "UNABLE_TO_GENERATE_OECD_REFERENCE",
+                        "reason" : "The backend has indicated that it is unable to generate the OECD reference."
+                      } ]
+                    }
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorResponse"
+                }
+              }
+            },
+            "description" : "Duplicate Record at back-end\n```\n\"code\"                                    \"reason\"\nUNABLE_TO_GENERATE_OECD_REFERENCE         The backend has indicated that it is unable to generate the OECD reference.\nREQUEST_NOT_PROCESSED                     The backend has indicated that the request could not be processed.\n",
+            "headers" : {
+              "CorrelationId" : {
+                "$ref" : "#/components/headers/CorrelationId"
+              }
+            }
+          },
+          "500" : {
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "examples" : {
+                  "Actual response" : {
+                    "value" : {
+                      "failures" : [ {
+                        "code" : "SERVER_ERROR",
+                        "reason" : "IF is currently experiencing problems that require live service intervention."
+                      } ]
+                    }
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorResponse"
+                }
+              }
+            },
+            "description" : "Server Error\n```\n\"code\"         \"reason\"\nSERVER_ERROR   IF is currently experiencing problems that require live service intervention.",
+            "headers" : {
+              "CorrelationId" : {
+                "$ref" : "#/components/headers/CorrelationId"
+              }
+            }
+          },
+          "503" : {
+            "content" : {
+              "application/json" : {
+                "examples" : {
+                  "Actual response" : {
+                    "value" : {
+                      "failures" : [ {
+                        "code" : "SERVICE_UNAVAILABLE",
+                        "reason" : "Dependent systems are currently not responding."
+                      } ]
+                    }
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/errorResponse"
+                }
+              }
+            },
+            "description" : "Service unavailable\n```\n\"code\"               \"reason\"\nSERVICE_UNAVAILABLE  Dependent systems are currently not responding.",
+            "headers" : {
+              "CorrelationId" : {
+                "$ref" : "#/components/headers/CorrelationId"
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "API#2142 Create Subscription For OECD Tax Pillar 2 Service",
+        "tags" : [ "API#2142" ]
+      }
+    }
+  },
+  "components" : {
+    "headers" : {
+      "CorrelationId" : {
+        "description" : "CorrelationID - Used for traceability purposes when present",
+        "explode" : false,
+        "schema" : {
+          "pattern" : "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$",
+          "type" : "string"
+        },
+        "style" : "simple"
+      },
+      "Content-Type" : {
+        "description" : "Tells the client what the content type of the returned content actually is",
+        "explode" : false,
+        "schema" : {
+          "enum" : [ "application/json" ],
+          "type" : "string"
+        },
+        "style" : "simple"
+      }
+    },
+    "parameters" : {
+      "environment" : {
+        "description" : "Mandatory. The environment in use.",
+        "explode" : false,
+        "in" : "header",
+        "name" : "Environment",
+        "required" : true,
+        "schema" : {
+          "enum" : [ "ist0", "clone", "live" ],
+          "type" : "string"
+        },
+        "style" : "simple"
+      },
+      "correlationId" : {
+        "description" : "Strongly recommended. A UUID format string for the transaction.",
+        "explode" : false,
+        "in" : "header",
+        "name" : "CorrelationId",
+        "required" : false,
+        "schema" : {
+          "pattern" : "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "type" : "string"
+        },
+        "style" : "simple"
+      }
+    },
+    "schemas" : {
+      "request" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "upeDetails" : {
+            "$ref" : "#/components/schemas/request_upeDetails"
+          },
+          "accountingPeriod" : {
+            "$ref" : "#/components/schemas/request_accountingPeriod"
+          },
+          "upeCorrespAddressDetails" : {
+            "$ref" : "#/components/schemas/request_upeCorrespAddressDetails"
+          },
+          "primaryContactDetails" : {
+            "$ref" : "#/components/schemas/contactDetailsType"
+          },
+          "secondaryContactDetails" : {
+            "$ref" : "#/components/schemas/contactDetailsType"
+          },
+          "filingMemberDetails" : {
+            "$ref" : "#/components/schemas/request_filingMemberDetails"
+          }
+        },
+        "required" : [ "accountingPeriod", "primaryContactDetails", "upeCorrespAddressDetails", "upeDetails" ],
+        "title" : "API#2142 Create Subscription For OECD Tax Pillar 2 Service Request Schema",
+        "type" : "object"
+      },
+      "errorResponse" : {
+        "additionalProperties" : false,
+        "example" : {
+          "failures" : [ {
+            "reason" : "reason",
+            "code" : "code"
+          }, {
+            "reason" : "reason",
+            "code" : "code"
+          } ]
+        },
+        "properties" : {
+          "failures" : {
+            "items" : {
+              "$ref" : "#/components/schemas/errorResponse_failures_inner"
+            },
+            "minItems" : 1,
+            "type" : "array",
+            "uniqueItems" : true
+          }
+        },
+        "required" : [ "failures" ],
+        "title" : "API#2142 Create Subscription For OECD Tax Pillar 2 Service Error Response Schema",
+        "type" : "object"
+      },
+      "successResponse" : {
+        "additionalProperties" : false,
+        "example" : {
+          "success" : {
+            "plrReference" : "plrReference",
+            "formBundleNumber" : "formBundleNumber",
+            "processingDate" : "processingDate"
+          }
+        },
+        "properties" : {
+          "success" : {
+            "$ref" : "#/components/schemas/successResponse_success"
+          }
+        },
+        "required" : [ "success" ],
+        "title" : "API#2142 Create Subscription For OECD Tax Pillar 2 Service Success Response Schema",
+        "type" : "object"
+      },
+      "contactDetailsType" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "name" : {
+            "description" : "Name",
+            "maxLength" : 160,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "telephone" : {
+            "pattern" : "^(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[\\-\\.\\ \\/]?)?((?:\\(?\\d{1,}\\)?[\\-\\.\\ \\/]?){0,})(?:[\\-\\.\\ \\/]?(?:#|ext\\.?|extension|x)[\\-\\.\\ \\/]?(\\d+))?$",
+            "type" : "string"
+          },
+          "emailAddress" : {
+            "format" : "email",
+            "type" : "string"
+          }
+        },
+        "required" : [ "emailAddress", "name" ],
+        "type" : "object"
+      },
+      "dateType" : {
+        "format" : "date",
+        "type" : "string"
+      },
+      "countryCodeType" : {
+        "description" : "Country code iso 3166-1 alpha-2",
+        "enum" : [ "AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT", "AU", "AW", "AX", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BM", "BN", "BO", "BQ", "BR", "BS", "BT", "BV", "BW", "BY", "BZ", "CA", "CC", "CD", "CF", "CG", "CH", "CI", "CK", "CL", "CM", "CN", "CO", "CR", "CS", "CU", "CV", "CW", "CX", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "EH", "ER", "ES", "ET", "EU", "FC", "FI", "FJ", "FK", "FM", "FO", "FR", "GA", "GB", "GD", "GE", "GF", "GG", "GH", "GI", "GL", "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW", "GY", "HK", "HM", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IM", "IN", "IO", "IQ", "IR", "IS", "IT", "JE", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MF", "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR", "MS", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG", "NI", "NL", "false", "NP", "NR", "NT", "NU", "NZ", "OM", "OR", "PA", "PE", "PF", "PG", "PH", "PK", "PL", "PM", "PN", "PR", "PS", "PT", "PW", "PY", "QA", "RE", "RO", "RS", "RU", "RW", "SA", "SB", "SC", "SD", "SE", "SG", "SH", "SI", "SJ", "SK", "SL", "SM", "SN", "SO", "SR", "SS", "ST", "SV", "SX", "SY", "SZ", "TC", "TD", "TF", "TG", "TH", "TJ", "TK", "TL", "TM", "TN", "TO", "TP", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "UM", "UN", "US", "UY", "UZ", "VA", "VC", "VE", "VG", "VI", "VN", "VU", "WF", "WS", "YE", "YT", "ZA", "ZM", "ZW" ],
+        "type" : "string"
+      },
+      "request_upeDetails" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "safeId" : {
+            "description" : "Safe ID.",
+            "pattern" : "^X[A-Z]{1}[0-9]{13}$",
+            "type" : "string"
+          },
+          "customerIdentification1" : {
+            "description" : "Customer Identification 1 - CRN.",
+            "pattern" : "^[A-Za-z0-9]{1,15}$",
+            "type" : "string"
+          },
+          "customerIdentification2" : {
+            "description" : "Customer Identification 2 - CT UTR.",
+            "pattern" : "^[A-Za-z0-9]{1,15}$",
+            "type" : "string"
+          },
+          "organisationName" : {
+            "description" : "Registered name of the organisation.",
+            "maxLength" : 160,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "registrationDate" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/dateType"
+            }, {
+              "description" : "Registration date"
+            } ]
+          },
+          "domesticOnly" : {
+            "description" : "Boolean to indicate the organisation is UK domestic only.",
+            "type" : "boolean"
+          },
+          "filingMember" : {
+            "description" : "Boolean to indicate filing member.",
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "domesticOnly", "filingMember", "organisationName", "registrationDate", "safeId" ],
+        "type" : "object"
+      },
+      "request_accountingPeriod" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "startDate" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/dateType"
+            }, {
+              "description" : "Start date of accounting period"
+            } ]
+          },
+          "endDate" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/dateType"
+            }, {
+              "description" : "End date of accounting period"
+            } ]
+          }
+        },
+        "required" : [ "endDate", "startDate" ],
+        "type" : "object"
+      },
+      "request_upeCorrespAddressDetails" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "addressLine1" : {
+            "description" : "Address Line 1",
+            "maxLength" : 35,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "addressLine2" : {
+            "description" : "Address Line 2",
+            "maxLength" : 35,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "addressLine3" : {
+            "description" : "Address Line 3",
+            "maxLength" : 35,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "addressLine4" : {
+            "description" : "Address Line 4",
+            "maxLength" : 35,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "postCode" : {
+            "description" : "Postal code",
+            "maxLength" : 10,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "countryCode" : {
+            "$ref" : "#/components/schemas/countryCodeType"
+          }
+        },
+        "required" : [ "addressLine1", "countryCode" ],
+        "type" : "object"
+      },
+      "request_filingMemberDetails" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "safeId" : {
+            "description" : "Safe ID.",
+            "pattern" : "^X[A-Z]{1}[0-9]{13}$",
+            "type" : "string"
+          },
+          "customerIdentification1" : {
+            "description" : "Customer Identification 1 - CRN.",
+            "pattern" : "^[A-Za-z0-9]{1,15}$",
+            "type" : "string"
+          },
+          "customerIdentification2" : {
+            "description" : "Customer Identification 2 - CT UTR.",
+            "pattern" : "^[A-Za-z0-9]{1,15}$",
+            "type" : "string"
+          },
+          "organisationName" : {
+            "description" : "Registered name of the organisation.",
+            "maxLength" : 160,
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [ "organisationName", "safeId" ],
+        "type" : "object"
+      },
+      "errorResponse_failures_inner" : {
+        "additionalProperties" : false,
+        "example" : {
+          "reason" : "reason",
+          "code" : "code"
+        },
+        "properties" : {
+          "code" : {
+            "description" : "Keys for all the errors returned",
+            "pattern" : "^[A-Z0-9_-]{1,160}$",
+            "type" : "string"
+          },
+          "reason" : {
+            "description" : "A simple description for the failure",
+            "maxLength" : 160,
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "reason" ],
+        "type" : "object"
+      },
+      "successResponse_success" : {
+        "additionalProperties" : false,
+        "example" : {
+          "plrReference" : "plrReference",
+          "formBundleNumber" : "formBundleNumber",
+          "processingDate" : "processingDate"
+        },
+        "properties" : {
+          "processingDate" : {
+            "pattern" : "^[0-9]{4}-([0][1-9]|[1][0-2])-([0][1-9]|[1-2][0-9]|[3][0-1])T([0-1][0-9]|[2][0-3]):[0-5][0-9]:[0-5][0-9]Z$",
+            "type" : "string"
+          },
+          "formBundleNumber" : {
+            "maxLength" : 12,
+            "minLength" : 12,
+            "pattern" : "^[0-9]{12}$",
+            "type" : "string"
+          },
+          "plrReference" : {
+            "maxLength" : 15,
+            "minLength" : 15,
+            "pattern" : "^X[A-Z]{1}PLR[0-9]{10}$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "formBundleNumber", "plrReference", "processingDate" ],
+        "type" : "object"
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "scheme" : "bearer",
+        "type" : "http"
+      }
+    }
+  }
+}
